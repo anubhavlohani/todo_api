@@ -14,3 +14,7 @@ class User(UserLogin):
 
   class Config:
     orm_mode = True
+
+class ReturnUser(BaseModel):
+  username: str
+  name: str
