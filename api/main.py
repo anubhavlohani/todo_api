@@ -22,6 +22,7 @@ def home():
 
 @app.post("/signup")
 def sign_up(user: schemas.User):
+	# check if username is taken
 	existing_user = crud.get_user(db, user.username)
 	if existing_user:
 		raise HTTPException(status_code=409, detail='Another user with this username exists. Use a different username.')
@@ -47,6 +48,7 @@ def todo_list(token: str = Depends(oauth2_scheme)):
 @app.post("/create-item")
 def create_item(todo_item: schemas.TodoItem, token: str = Depends(oauth2_scheme)):
 	user = helpers.decode_token(db, token)
+	# check if user already has an item with this title
 	existing_user_item = crud.find_item(db, user.username, todo_item.title)
 	if existing_user_item:
 		raise HTTPException(status_code=409, detail='An item with the same title already exists. Try using a different title')

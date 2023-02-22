@@ -30,7 +30,7 @@ def create_access_token(data: dict) -> str:
 	encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 	return encoded_jwt
 
-
+# checks if a user with entered username exists. If yes, compares password hash and return new jwt on success 
 def authenticate_user(db: Database, form_data: OAuth2PasswordRequestForm) -> dict:
     user = crud.get_user(db, form_data.username)
     if not user:
@@ -49,6 +49,7 @@ def authenticate_user(db: Database, form_data: OAuth2PasswordRequestForm) -> dic
             "access_token": access_token, "token_type": "bearer"
         }
 
+# check if jwt is valid or expired and return user details
 def decode_token(db: Database, token: str) -> schemas.User:
 	try:
 		decoded_jwt = jwt.decode(token, SECRET_KEY, ALGORITHM)
