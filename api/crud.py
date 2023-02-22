@@ -51,3 +51,9 @@ def update_item(db: Database, item_id: str, new_item_data: dict) -> bool:
     update_query = {"$set": new_item_data}
     update_successful = collection.update_one({'_id': item_id}, update_query)
     return True if update_successful else False
+
+# delete item given it's id
+def delete_item(db: Database, item_id: str) -> bool:
+    collection = db['items']
+    deletion_successful = collection.delete_one({'_id': item_id})
+    return True if deletion_successful else False
