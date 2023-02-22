@@ -24,10 +24,14 @@ def create_user(db: Database, user: schemas.User) -> bool:
     insertion_successful = collection.insert_one(user_data)
     return True if insertion_successful else False
 
-# return all todo-items for the given user
+# return all todo-items for given user
 def user_items(db: Database, username: str) -> list[dict]:
     collection = db['users']
     curr_items = collection.find({'username': username}, {'_id': 0, 'items': 1})
-    for item in curr_items:
-        print(item)
+    curr_items = curr_items[0]['items']
     return curr_items
+
+# create new todo item for given user
+def create_item(db: Database, user: schemas.User, item_data: schemas.TodoItem):
+    collection = db['users']
+    collection.update_one({'username': user.username}, {"$push": {"items": item_data.dict()}})
