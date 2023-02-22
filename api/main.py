@@ -72,6 +72,21 @@ def update_item(item_id: str, item_data: dict, token: str = Depends(oauth2_schem
 		raise HTTPException(status_code=422, detail="Unable to create new story")
 	return {'success': True}
 
+@app.delete("/delete-item")
+def delete_item(item_id: str, token: str = Depends(oauth2_scheme)):
+	user = helpers.decode_token(db, token)
+	# check if user owns the item
+	collection = db['items']
+	item_under_edit = collection.find_one({'_id': item_id})
+	if item_under_edit['username'] != user.username:
+		raise HTTPException(status_code=401, details="You don't have access to this item")
+	try:
+		crud.delete_item(db, item_id)
+	except Exception as err:
+		print(err)
+		raise HTTPException(status_code=422, detail="Unable to create new story")
+	return {'success': True}
+
 
 
 if __name__ == "__main__":
