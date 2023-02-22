@@ -57,6 +57,21 @@ def create_item(todo_item: schemas.TodoItem, token: str = Depends(oauth2_scheme)
 		raise HTTPException(status_code=422, detail="Unable to create new story")
 	return {'success': True}
 
+@app.post("/update-item")
+def update_item(item_id: str, item_data: dict, token: str = Depends(oauth2_scheme)):
+	user = helpers.decode_token(db, token)
+	# check if user owns the item
+	collection = db['items']
+	item_under_edit = collection.find_one({'_id': item_id})
+	if item_under_edit['username'] != user.username:
+		raise HTTPException(status_code=401, details="You don't have access to this item")
+	try:
+		crud.update_item(db, item_id, new_item_data=item_data)
+	except Exception as err:
+		print(err)
+		raise HTTPException(status_code=422, detail="Unable to create new story")
+	return {'success': True}
+
 
 
 if __name__ == "__main__":
