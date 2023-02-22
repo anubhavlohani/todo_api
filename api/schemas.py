@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Union
+from typing import Optional
 
 
 '''
@@ -18,3 +18,9 @@ class User(UserLogin):
 class ReturnUser(BaseModel):
   username: str
   name: str
+
+class TodoItem(BaseModel):
+  title: str
+  description: Optional[str]
+  deadline: str
+  status: bool
