@@ -7,13 +7,14 @@ from pymongo.database import Database
 from . import schemas, helpers
 
 
-# function to search and return true if user exists
-def get_user(db: Database, username: str) -> Union[None, dict]:
+# search and return true if user exists
+def get_user(db: Database, username: str) -> schemas.User:
     collection = db['users']
     user = collection.find_one({'username': username})
+    user = schemas.User(**user)
     return user
 
-# function to create new user and push to mongoDB
+# create new user and push to mongoDB
 def create_user(db: Database, user: schemas.User) -> bool:
     existing_user = get_user(db, user.username)
     if existing_user:

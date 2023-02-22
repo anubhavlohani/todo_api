@@ -1,5 +1,4 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 import uvicorn
@@ -32,9 +31,10 @@ def sign_up(user: schemas.User):
 	return {'success': True}
 
 @app.post("/login")
-def login(login_data: schemas.UserLogin):
-	auth_data = helpers.authenticate_user(db, login_data)
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+	auth_data = helpers.authenticate_user(db, form_data)
 	return auth_data
+
 
 
 if __name__ == "__main__":

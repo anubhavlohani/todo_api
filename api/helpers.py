@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from fastapi import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from pymongo.database import Database
 
 from jose import jwt, ExpiredSignatureError, JWTError
@@ -28,18 +29,18 @@ def create_access_token(data: dict) -> str:
   encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
   return encoded_jwt
 
-def authenticate_user(db: Database, login_data: schemas.UserLogin) -> dict:
-    user = crud.get_user(db, login_data.username)
+def authenticate_user(db: Database, form_data: OAuth2PasswordRequestForm) -> dict:
+    user = crud.get_user(db, form_data.username)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    if not verify_password(login_data.password, user['password']):
+    if not verify_password(form_data.password, user.password):
        raise HTTPException(status_code=400, detail="Incorrect username or password")
     
-    token_data = {'username': user['username']}
+    token_data = {'username': user.username}
     access_token = create_access_token(token_data)
     user_details = schemas.ReturnUser(
-        username=user['username'],
-        name=user['name'],
+        username=user.username,
+        name=user.name,
     )
     return {
             "user_details": user_details,
