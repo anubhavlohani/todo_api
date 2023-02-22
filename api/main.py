@@ -22,7 +22,7 @@ def home():
 	return "Ahh, I see you've found this API 🦄. Welcome 🦚"
 
 @app.post("/signup")
-def sign_up(user: schemas.UserSignUp):
+def sign_up(user: schemas.User):
 	try:
 		user.password = helpers.generate_password_hash(user.password)
 		crud.create_user(db, user)
@@ -31,6 +31,10 @@ def sign_up(user: schemas.UserSignUp):
 		raise HTTPException(status_code=422, detail="Unable to create new user")
 	return {'success': True}
 
+@app.post("/login")
+def login(login_data: schemas.UserLogin):
+	auth_data = helpers.authenticate_user(db, login_data)
+	return auth_data
 
 
 if __name__ == "__main__":
