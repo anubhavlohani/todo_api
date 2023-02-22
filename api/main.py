@@ -35,6 +35,12 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 	auth_data = helpers.authenticate_user(db, form_data)
 	return auth_data
 
+@app.get("/todo")
+def todo_list(token: str = Depends(oauth2_scheme)):
+	user = helpers.decode_token(db, token)
+	user_items = crud.user_items(db, user.username)
+	return {'todo_items': None}
+
 
 
 if __name__ == "__main__":
