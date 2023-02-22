@@ -39,7 +39,17 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 def todo_list(token: str = Depends(oauth2_scheme)):
 	user = helpers.decode_token(db, token)
 	user_items = crud.user_items(db, user.username)
-	return {'todo_items': None}
+	return {'todo_items': user_items}
+
+@app.post("/create-item")
+def create_item(todo_item: schemas.TodoItem, token: str = Depends(oauth2_scheme)):
+	user = helpers.decode_token(db, token)
+	try:
+		crud.create_item(db, user, todo_item)
+	except Exception as err:
+		print(err)
+		raise HTTPException(status_code=422, detail="Unable to create new story")
+	return {'success': True}
 
 
 
