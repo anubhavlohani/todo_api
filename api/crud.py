@@ -14,7 +14,7 @@ def get_user(db: Database, username: str) -> Union[None, dict]:
     return user
 
 # function to create new user and push to mongoDB
-def create_user(db: Database, user: schemas.UserSignUp) -> Union[bool, HTTPException]:
+def create_user(db: Database, user: schemas.User) -> bool:
     existing_user = get_user(db, user.username)
     if existing_user:
         raise HTTPException(status_code=409, detail='Another user with this username exists. Use a different username.')

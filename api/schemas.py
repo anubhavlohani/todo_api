@@ -9,7 +9,7 @@ class UserLogin(BaseModel):
   username: str
   password: str
 
-class UserSignUp(UserLogin):
+class User(UserLogin):
   name: str
 
   class Config:
