@@ -1,10 +1,8 @@
 import uuid
-from typing import Union
 
-from fastapi import HTTPException
 from pymongo.database import Database
 
-from . import schemas, helpers
+from . import schemas
 
 
 # search and return true if user exists
