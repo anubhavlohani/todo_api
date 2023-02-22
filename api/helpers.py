@@ -46,3 +46,15 @@ def authenticate_user(db: Database, form_data: OAuth2PasswordRequestForm) -> dic
             "user_details": user_details,
             "access_token": access_token, "token_type": "bearer"
         }
+
+def decode_token(db: Database, token: str) -> schemas.User:
+	try:
+		decoded_jwt = jwt.decode(token, SECRET_KEY, ALGORITHM)
+	except ExpiredSignatureError:
+		raise HTTPException(status_code=440, detail="Session expired, please login again.")
+	except JWTError:
+		raise HTTPException(status_code=401, detail="Invalid authentication")
+	current_user = crud.get_user(db, decoded_jwt['username'])
+	if current_user is None:
+		raise HTTPException(status_code=404, detail="User not found")
+	return current_user
